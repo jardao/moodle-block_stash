@@ -52,30 +52,38 @@ if($data = $form->get_data()){
 	$form_manager -> require_acquire_items($userid);
 
 	//to check wehter the item belongs to the stash course
-    if (!\block_stash\item::is_item_in_stash($itemid, $form_manager->get_stash()->get_id())) {
+	if (!\block_stash\item::is_item_in_stash($itemid, $form_manager->get_stash()->get_id())) {
 
-    	throw new coding_exception("Invalid item");
+		throw new coding_exception("Invalid item");
 	} 
 
     //to check itemquantity
-    if($itemquantity < 1){
+	if($itemquantity < 0){
 
-    	throw new coding_exception("Invalid item quantity");
-    }
+		throw new coding_exception("Invalid item quantity");
+	}
 
-    //we check wether the user already has the item
-    if($DB -> record_exists('block_stash_user_items', array('itemid' => $itemid, 'userid' => $userid))){
+    //to delete the item
+	if($itemquantity == 0){
 
-    	$DB -> set_field('block_stash_user_items', 'quantity', $itemquantity, array('itemid' => $itemid, 'userid' => $userid));
-    
-    } else{
+		$DB->delete_records(\block_stash\user_item::TABLE, ['itemid' => $itemid, 'userid' => $userid]);
+		
+	} else {
 
-    	$params = ['userid' => $userid, 'itemid' => $itemid]; 
-    	$user_item = new \block_stash\user_item(null, (object) $params);
-    	$user_item -> create();
-    	$user_item -> set_quantity($itemquantity);
-    	$user_item -> update();
-    }
+    	//we check wether the user already has the item
+		if($DB -> record_exists('block_stash_user_items', array('itemid' => $itemid, 'userid' => $userid))){
+
+			$DB -> set_field('block_stash_user_items', 'quantity', $itemquantity, array('itemid' => $itemid, 'userid' => $userid));
+
+		} else{
+
+			$params = ['userid' => $userid, 'itemid' => $itemid]; 
+			$user_item = new \block_stash\user_item(null, (object) $params);
+			$user_item -> create();
+			$user_item -> set_quantity($itemquantity);
+			$user_item -> update();
+		}
+	}
 
 	redirect($returnurl);
 

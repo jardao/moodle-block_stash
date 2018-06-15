@@ -52,8 +52,7 @@ if($data = $form->get_data()){
 	$form_manager -> require_acquire_items($userid);
 
 	//to check wehter the item belongs to the stash course
-	$item_is_in_stash = \block_stash\item::is_item_in_stash($itemid, $form_manager->get_stash()->get_id());
-    if (!$item_is_in_stash ) {
+    if (!\block_stash\item::is_item_in_stash($itemid, $form_manager->get_stash()->get_id())) {
 
     	throw new coding_exception("Invalid item");
 	} 
@@ -68,6 +67,14 @@ if($data = $form->get_data()){
     if($DB -> record_exists('block_stash_user_items', array('itemid' => $itemid, 'userid' => $userid))){
 
     	$DB -> set_field('block_stash_user_items', 'quantity', $itemquantity, array('itemid' => $itemid, 'userid' => $userid));
+    
+    } else{
+
+    	$params = ['userid' => $userid, 'itemid' => $itemid]; 
+    	$user_item = new \block_stash\user_item(null, (object) $params);
+    	$user_item -> create();
+    	$user_item -> set_quantity($itemquantity);
+    	$user_item -> update();
     }
 
 	redirect($returnurl);

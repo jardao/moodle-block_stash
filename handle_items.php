@@ -36,7 +36,18 @@ $PAGE->navbar->add($title, $returnurl);
 $PAGE->navbar->add($subtitle);
 
 $renderer = $PAGE->get_renderer('block_stash');
-$form = new handleitem_form(null, array('courseid' => $courseid, 'userid' => $userid));
+
+//obtención de los items del curso para enviarlos al formulario
+$items = $manager -> get_items();
+
+foreach ($items as $key => $item) {
+	
+	$id = $item -> get_id();
+	$name = $item -> get_name();
+	$itemsf[$id] = $name;
+}
+
+$form = new handleitem_form(null, array('courseid' => $courseid, 'userid' => $userid, 'itemsf' => $itemsf));
 
 if($data = $form->get_data()){
 

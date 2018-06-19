@@ -14,8 +14,7 @@ class handleitem_form extends moodleform {
 
 		$mform->addElement('header', 'generalhdr', get_string('general'));
 
-		$mform->addElement('text', 'itemid', 'Item id');
-		$mform->setType('itemid', PARAM_INT);
+		$mform->addElement('select','itemid','Item id',$this->_customdata['itemsf']);
 
 		$mform->addElement('text', 'itemquantity', 'Item quantity');
 		$mform->setType('itemquantity', PARAM_INT);

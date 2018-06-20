@@ -16,7 +16,7 @@ class handleitem_form extends moodleform {
 
 		$mform->addElement('select', 'itemid', get_string('item', 'block_stash'), $this->_customdata['itemsf']);
 
-		$mform->addElement('text', get_string('itemquantity', 'block_stash'), 'Item quantity');
+		$mform->addElement('text', 'itemquantity', get_string('itemquantity', 'block_stash'));
 		$mform->setType('itemquantity', PARAM_INT);
 		$mform->addRule('itemquantity',get_string('itemquantityexception', 'block_stash'),'numeric',null,'client');
 		$mform->addRule('itemquantity', null, 'required', null, 'client');

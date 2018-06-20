@@ -159,3 +159,11 @@ $string['filterstashnotactive'] = 'The filter plugin is installed but not yet en
 $string['filterstashnotenabled'] = 'The filter plugin is installed but not yet <a href="{$a->enableurl}" target="_blank">enabled</a>.';
 $string['filterstashnotinstalled'] = 'We recommend that you install and enable the <a href="{$a->installurl}" target="_blank">filter plugin for Stash</a>. It makes it easier and more reliable to use the snippets. It also enables trading.';
 $string['filterstashwrongversion'] = 'The filter plugin that you have installed is an early version and does not work with trading. Please visit <a href="{$a}" target="_blank">this page</a> to get the latest version.';
+
+//handle items
+$string['handleitems'] = 'Handle the user\'s items';
+$string['handleitems_help'] = 'Select the item you want to modify in the users stash. Then write the amount of items you want the user to end with. If you want to delete the item from the user\'s stash set the quantity to 0.';
+$string['handleitemsof'] = 'Handle the items of {$a}';
+$string['itemquantity'] = 'Item quantity';
+$string['itemquantity_help'] = 'Set to 0 if you want to delete the item from the user\'s stash or set the number of items you want the user to end with';
+$string['itemquantityexception'] = 'Item quantity should be an positive integer or zero';

@@ -20,8 +20,8 @@ $manager->require_manage();
 $context = context_course::instance($courseid);
 $url = new moodle_url('/blocks/stash/handle_items.php', array('userid' => $userid, 'courseid' => $courseid));
 
-$title = 'Report';
-$subtitle = 'Handling items';
+$title = get_string('report','block_stash');
+$subtitle = get_string('handleitems','block_stash');
 
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('course');
@@ -40,7 +40,7 @@ $renderer = $PAGE->get_renderer('block_stash');
 //obtención de los items del curso para enviarlos al formulario
 $items = $manager -> get_items();
 
-foreach ($items as $key => $item) {
+foreach ($items as $item) {
 	
 	$id = $item -> get_id();
 	$name = $item -> get_name();
@@ -84,7 +84,10 @@ if($data = $form->get_data()){
     	//we check wether the user already has the item
 		if($DB -> record_exists('block_stash_user_items', array('itemid' => $itemid, 'userid' => $userid))){
 
-			$DB -> set_field('block_stash_user_items', 'quantity', $itemquantity, array('itemid' => $itemid, 'userid' => $userid));
+			$user_item_id = $DB -> get_field('block_stash_user_items', 'id', array('itemid' => $itemid, 'userid' => $userid));
+			$user_item = new \block_stash\user_item($user_item_id);
+			$user_item -> set_quantity($itemquantity);
+			$user_item -> update();
 
 		} else{
 
@@ -106,6 +109,7 @@ if($data = $form->get_data()){
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title,2);
 echo $renderer->navigation($manager, 'report');
+$subtitle = $subtitle . $OUTPUT->help_icon('handleitems', 'block_stash');
 echo $OUTPUT->heading($subtitle, 3);
 $form->display();
 echo $OUTPUT->footer();

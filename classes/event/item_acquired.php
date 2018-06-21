@@ -48,8 +48,7 @@ class item_acquired extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' helped the user '$this->relateduserid' to acquire an item with
-                the id '$this->objectid' with the quantity of '" . $this->other['quantity'] . "'.";
+        return "The user '" . $this->other['username'] . "' helped the user '" . $this->other['relatedusername'] . "'  to acquire an item '" . $this->other['itemname'] . "' with the quantity of '" . $this->other['quantity'] . "' via '" . $this->other['droportrade'] . "'.";
     }
 
     /**

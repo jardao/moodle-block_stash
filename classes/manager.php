@@ -654,7 +654,7 @@ class manager {
 
         // TODO Implement quantity from the drop configuration.
         $quantity = 1;
-        $this->pickup_item($drop->get_itemid(), $quantity, $userid);
+        $this->pickup_item($drop->get_itemid(), $quantity, $userid, 'drop');
 
         // Update the drop pickup values.
         $dp->set_pickupcount($dp->get_pickupcount() + 1);
@@ -674,8 +674,10 @@ class manager {
      * @param int $userid The user pickuping the item.
      * @return void
      */
-    public function pickup_item($itemorid, $quantity = 1, $userid = null) {
+    public function pickup_item($itemorid, $quantity = 1, $userid = null, $droportrade = 'drop') {
         global $USER;
+        global $DB;
+
         $this->require_enabled();
 
         if ($userid == $USER->id) {
@@ -703,13 +705,17 @@ class manager {
         // TODO Create a method that automatically pushes to the database to prevent race conditions.
         $ui->set_quantity($currentquantity + $quantity);
         $ui->update();
+
+        $relatedusername = $DB->get_field('user','username',['id' => $userid]);
+        $itemname = $item->get_name();
         $event = \block_stash\event\item_acquired::create(array(
                 'context' => $this->context,
                 'userid' => $USER->id,
                 'courseid' => $this->courseid,
                 'objectid' => $item->get_id(),
                 'relateduserid' => $userid,
-                'other' => array('quantity' => $quantity)
+                'other' => array('quantity' => $quantity, 'relatedusername' => $relatedusername, 'droportrade' => $droportrade, 
+                    'username' => $USER->username, 'itemname' => $itemname)
             )
         );
         $event->trigger();
@@ -957,7 +963,7 @@ class manager {
         // If we get this far, then follow through with the trade.
         $this->remove_user_items($requireditems, $userid);
         foreach ($itemstoacquire as $items) {
-            $this->pickup_item($items->get_itemid(), $items->get_quantity(), $userid);
+            $this->pickup_item($items->get_itemid(), $items->get_quantity(), $userid, 'trade');
         }
         // Send back summary information.
         return [

@@ -5,6 +5,7 @@ require_once('./classes/form/handleitem_form.php');
 
 global $PAGE;
 global $DB;
+global $USER;
 
 use coding_exception;
 
@@ -97,6 +98,21 @@ if($data = $form->get_data()){
 			$user_item -> set_quantity($itemquantity);
 			$user_item -> update();
 		}
+
+        $relatedusername = $DB->get_field('user','username',['id' => $userid]);
+		$item = new \block_stash\item($itemid);
+        $itemname = $item->get_name();
+        $event = \block_stash\event\item_acquired::create(array(
+                'context' => $context,
+                'userid' => $USER->id,
+                'courseid' => $courseid,
+                'objectid' => $item->get_id(),
+                'relateduserid' => $userid,
+                'other' => array('quantity' => $itemquantity, 'relatedusername' => $relatedusername, 'droportrade' => 'modification', 
+                    'username' => $USER->username, 'itemname' => $itemname)
+            )
+        );
+        $event->trigger();
 	}
 
 	redirect($returnurl);

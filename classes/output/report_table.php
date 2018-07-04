@@ -162,6 +162,13 @@ class report_table extends table_sql {
             get_string('handleitemsof', 'block_stash', $fullname)));        
         $actions[] = $actionlink;
 
+        //events history
+        $url = new moodle_url('/blocks/stash/events_history.php');
+        $url->params(['userid' => $row->id, 'courseid' => $this->manager->get_courseid()]);
+        $actionlink = $OUTPUT->action_link($url, '', null, null, new pix_icon('i/report', 
+            get_string('eventshistoryof', 'block_stash', $fullname)));
+        $actions[] = $actionlink;
+
         return implode(' ', $actions);
     }
 

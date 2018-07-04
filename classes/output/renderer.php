@@ -24,6 +24,8 @@
 namespace block_stash\output;
 defined('MOODLE_INTERNAL') || die();
 
+require_once('./classes/output/eventshistory_renderable.php');
+
 use context;
 use html_writer;
 use moodle_url;
@@ -143,7 +145,7 @@ class renderer extends plugin_renderer_base {
                 'items',
                 new moodle_url('/blocks/stash/items.php', ['courseid' => $courseid]),
                 get_string('navitems', 'block_stash')
-            );
+                );
 
             // Presently we hide the drops page by default.
             if ($page == 'drops') {
@@ -151,7 +153,7 @@ class renderer extends plugin_renderer_base {
                     'drops',
                     new moodle_url('/blocks/stash/drops.php', ['courseid' => $courseid]),
                     get_string('navdrops', 'block_stash')
-                );
+                    );
             }
 
             // I want to hide this depending on the block filter being enabled and there being at least one item defined.
@@ -159,13 +161,13 @@ class renderer extends plugin_renderer_base {
                 'trade',
                 new moodle_url('/blocks/stash/trade.php', ['courseid' => $courseid]),
                 get_string('navtrade', 'block_stash')
-            );
+                );
 
             $tabs[] = new tabobject(
                 'report',
                 new moodle_url('/blocks/stash/report.php', ['courseid' => $courseid]),
                 get_string('navreport', 'block_stash')
-            );
+                );
         }
 
         // If there is only one page, then that is the page we are on.
@@ -214,6 +216,58 @@ class renderer extends plugin_renderer_base {
     public function render_trade_form(renderable $page) {
         $data = $page->export_for_template($this);
         return parent::render_from_template('block_stash/trade_form', $data);
+    }
+
+    //Andrés Muñoz Fernández
+    public function render_eventshistory_table(\eventshistory_renderable $reportlog){
+
+        if (empty($reportlog->selectedlogreader)) {
+            echo $this->output->notification(get_string('nologreaderenabled', 'report_log'), 'notifyproblem');
+            return;
+        }
+        if ($reportlog->showselectorform) {
+            $this->report_selector_form($reportlog);
+        }
+
+        if ($reportlog->showreport) {
+            $reportlog->tablelog->out($reportlog->perpage, true);
+        }
+    }
+
+    public function report_selector_form(\eventshistory_renderable $reportlog) {
+        echo html_writer::start_tag('form', array('class' => 'logselecform', 'action' => $reportlog->url, 'method' => 'get'));
+        echo html_writer::start_div();
+        echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'chooselog', 'value' => '1'));
+
+        $courseid = $reportlog->course->id;
+        echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'courseid', 'value' => $courseid ));
+
+        $userid = $reportlog->userid;
+        echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'userid', 'value' => $userid));
+
+        // Add date selector.
+        $dates = $reportlog->get_date_options();
+        echo html_writer::label(get_string('date'), 'menudate', false, array('class' => 'accesshide'));
+        echo html_writer::select($dates, "date", $reportlog->date, get_string("alldays"));
+
+
+        // Add reader option.
+        // If there is some reader available then only show submit button.
+        $readers = $reportlog->get_readers(true);
+        if (!empty($readers)) {
+            if (count($readers) == 1) {
+                $attributes = array('type' => 'hidden', 'name' => 'logreader', 'value' => key($readers));
+                echo html_writer::empty_tag('input', $attributes);
+            } else {
+                echo html_writer::label(get_string('selectlogreader', 'report_log'), 'menureader', false,
+                    array('class' => 'accesshide'));
+                echo html_writer::select($readers, 'logreader', $reportlog->selectedlogreader, false);
+            }
+            echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('gettheselogs'),
+                'class' => 'btn btn-secondary'));
+        }
+        echo html_writer::end_div();
+        echo html_writer::end_tag('form');
     }
 
 }

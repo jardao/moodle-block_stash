@@ -168,6 +168,7 @@ $string['itemquantity'] = 'Item quantity';
 $string['itemquantity_help'] = 'Set to 0 if you want to delete the item from the user\'s stash or set the number of items you want the user to end with';
 $string['itemquantityexception'] = 'Item quantity should be an positive integer or zero';
 $string['eventshistory'] = "Events history";
+$string['eventshistory_help'] = "Report of all the events of the user related to its items";
 $string['eventshistoryof'] = 'Check the events history of {$a}';
 $string['page'] = 'Page {$a}';
 $string['nologreaderenabled'] = 'No log reader enabled';

@@ -1,7 +1,5 @@
 <?php
 
-namespace block_stash\output;
-
 class eventshistory_table extends table_sql {
 
 
@@ -35,6 +33,32 @@ class eventshistory_table extends table_sql {
 		$this->pageable(true);
 	}
 
+    protected function get_user_fullname($userid) {
+        global $DB;
+
+        if (empty($userid)) {
+            return false;
+        }
+
+        if (!empty($this->userfullnames[$userid])) {
+            return $this->userfullnames[$userid];
+        }
+
+        // We already looked for the user and it does not exist.
+        if ($this->userfullnames[$userid] === false) {
+            return false;
+        }
+
+        // If we reach that point new users logs have been generated since the last users db query.
+        list($usql, $uparams) = $DB->get_in_or_equal($userid);
+        $sql = "SELECT id," . get_all_user_name_fields(true) . " FROM {user} WHERE id " . $usql;
+        if (!$user = $DB->get_records_sql($sql, $uparams)) {
+            return false;
+        }
+
+        $this->userfullnames[$userid] = fullname($user);
+        return $this->userfullnames[$userid];
+    }
 
 	public function col_time($event) {
 
@@ -93,10 +117,6 @@ class eventshistory_table extends table_sql {
 		$joins = array();
 		$params = array();
 
-        // If we filter by userid and module id we also need to filter by crud and edulevel to ensure DB index is engaged.
-		$useextendeddbindex = !($this->filterparams->logreader instanceof logstore_legacy\log\store)
-		&& !empty($this->filterparams->userid) && !empty($this->filterparams->modid);
-
 		//courseid
 		$joins[] = "courseid = :courseid";
 		$params['courseid'] = $this->filterparams->courseid;
@@ -112,6 +132,7 @@ class eventshistory_table extends table_sql {
         }
 
         //queda pendiente incluir un join para el nombre del evento
+        $joins[] = "eventname like \"%block_stash%\"";
 
         $selector = implode(' AND ', $joins);
 

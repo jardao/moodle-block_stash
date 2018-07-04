@@ -24,7 +24,8 @@
 namespace block_stash\output;
 defined('MOODLE_INTERNAL') || die();
 
-require_once('./classes/output/eventshistory_renderable.php');
+//aparantemente usar este require no es necesario basta con el / que tenemos en la función
+//require_once('eventshistory_renderable.php');
 
 use context;
 use html_writer;

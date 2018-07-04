@@ -1,6 +1,10 @@
 <?php
 
+//namespace block_stash\output;
+
 defined('MOODLE_INTERNAL') || die;
+
+require_once('eventshistory_table.php');
 
 class eventshistory_renderable implements renderable {
 
@@ -148,7 +152,7 @@ class eventshistory_renderable implements renderable {
     	$filter->date = $this->date;
     	$filter->orderby = $this->order;
 
-    	$this->tablelog = new \block_stash\output\eventshistory_table('block_stash', $filter);
+    	$this->tablelog = new eventshistory_table('block_stash', $filter);
     	$this->tablelog->define_baseurl($this->url);
     }
 

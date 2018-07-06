@@ -4,7 +4,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
-class handleitem_form extends moodleform {
+class edit_user_items_form extends moodleform {
 
 	public function definition(){
 
@@ -14,23 +14,25 @@ class handleitem_form extends moodleform {
 
 		$mform->addElement('header', 'generalhdr', get_string('general'));
 
+		// Item to edit
 		$mform->addElement('select', 'itemid', get_string('item', 'block_stash'), $this->_customdata['itemsf']);
 
+		// Item quantity
 		$mform->addElement('text', 'itemquantity', get_string('itemquantity', 'block_stash'));
 		$mform->setType('itemquantity', PARAM_INT);
 		$mform->addRule('itemquantity',get_string('itemquantityexception', 'block_stash'),'numeric',null,'client');
 		$mform->addRule('itemquantity', null, 'required', null, 'client');
         $mform->addHelpButton('itemquantity', 'itemquantity', 'block_stash');
 
-		//Hidden
+		// Hidden
 		$mform->addElement('hidden', 'courseid', $this->_customdata['courseid']);
 		$mform->addElement('hidden', 'userid', $this->_customdata['userid']);
 		$mform->addElement('hidden', 'report_page', $this->_customdata['report_page']);
 
         // Buttons.
 		$buttonarray = [];
-		$buttonarray[] = &$mform->createElement('submit', 'saveandnext', get_string('saveandnext', 'block_stash'));
-		$buttonarray[] = &$mform->createElement('submit', 'save', get_string('savechanges', 'block_stash'));
+		$buttonarray[] = &$mform->createElement('submit', 'savechanges', get_string('savechanges', 'block_stash'));
+		$buttonarray[] = &$mform->createElement('submit', 'saveandexit', get_string('saveandexit', 'block_stash'));
 		$buttonarray[] = &$mform->createElement('cancel');
 		$mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 		$mform->closeHeaderBefore('buttonar');

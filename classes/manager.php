@@ -672,6 +672,7 @@ class manager {
      * @param int|item $itemorid The item, or its ID.
      * @param int $quantity The quantity of item being pickuped.
      * @param int $userid The user pickuping the item.
+     * @param string $droportrade The method used to obtain the item (mfernadriu modifications)
      * @return void
      */
     public function pickup_item($itemorid, $quantity = 1, $userid = null, $droportrade = 'drop') {
@@ -706,7 +707,9 @@ class manager {
         $ui->set_quantity($currentquantity + $quantity);
         $ui->update();
 
-        $relatedusername = $DB->get_field('user','username',['id' => $userid]);
+        // mfernadriu modifications
+        // Strings added in the event's "other" field to get an easier read on event's description.
+        $relatedusername = $DB->get_field('user','username',['id' => $userid]);      
         $itemname = $item->get_name();
         $event = \block_stash\event\item_acquired::create(array(
                 'context' => $this->context,

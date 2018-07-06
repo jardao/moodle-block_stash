@@ -24,9 +24,6 @@
 namespace block_stash\output;
 defined('MOODLE_INTERNAL') || die();
 
-//aparantemente usar este require no es necesario basta con el / que tenemos en la función
-//require_once('eventshistory_renderable.php');
-
 use context;
 use html_writer;
 use moodle_url;
@@ -219,8 +216,8 @@ class renderer extends plugin_renderer_base {
         return parent::render_from_template('block_stash/trade_form', $data);
     }
 
-    //Andrés Muñoz Fernández
-    public function render_eventshistory_table(\eventshistory_renderable $reportlog){
+    // mfernandriu modifications
+    public function render_event_history_table(\event_history_renderable $reportlog){
 
         if (empty($reportlog->selectedlogreader)) {
             echo $this->output->notification(get_string('nologreaderenabled', 'report_log'), 'notifyproblem');
@@ -235,17 +232,23 @@ class renderer extends plugin_renderer_base {
         }
     }
 
-    public function report_selector_form(\eventshistory_renderable $reportlog) {
+    // To print event_history.php's search options
+    public function report_selector_form(\event_history_renderable $reportlog) {
         echo html_writer::start_tag('form', array('class' => 'logselecform', 'action' => $reportlog->url, 'method' => 'get'));
         echo html_writer::start_div();
+
+        // To show the query
         echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'chooselog', 'value' => '1'));
 
+        // courseid
         $courseid = $reportlog->course->id;
         echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'courseid', 'value' => $courseid ));
 
+        // userid
         $userid = $reportlog->userid;
         echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'userid', 'value' => $userid));
 
+        // Page of report.php's table to redirect to
         $report_page = $reportlog->report_page;
         echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'report_page', 'value' => $report_page));
 
@@ -268,7 +271,7 @@ class renderer extends plugin_renderer_base {
                     array('class' => 'accesshide'));
                 echo html_writer::select($readers, 'logreader', $reportlog->selectedlogreader, false);
             }
-            echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('gettheselogs'),
+            echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('eventhistoryget','block_stash'),
                 'class' => 'btn btn-secondary'));
         }
         echo html_writer::end_div();

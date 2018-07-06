@@ -1,5 +1,8 @@
 <?php
 
+//  mfernandriu
+//  This script allows the user to check the block_stash plugin's events related to some course user
+
 require('../../config.php');
 
 require_once($CFG->dirroot.'/course/lib.php');
@@ -7,16 +10,15 @@ require_once($CFG->dirroot.'/report/log/locallib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/lib/tablelib.php');
 
-require_once('./classes/output/eventshistory_renderable.php');
-//use block_stash\output\eventshistory_renderable;
+require_once('./classes/output/event_history_renderable.php');
 
-$courseid 	= required_param('courseid', PARAM_INT); // Course to display
+$courseid 	= required_param('courseid', PARAM_INT); // User's course
 $userid 	= required_param('userid', PARAM_INT); // User to display
 $date       = optional_param('date', 0, PARAM_INT); // Date to display.
 $page        = optional_param('page', '0', PARAM_INT);     // Which page to show.
 $perpage     = optional_param('perpage', '100', PARAM_INT); // How many per page.
 $chooselog   = optional_param('chooselog', false, PARAM_BOOL); // Print the query 
-$logreader      = optional_param('logreader', '', PARAM_COMPONENT); // Reader which will be used for displaying logs.
+$logreader      = optional_param('logreader', '', PARAM_COMPONENT); // Reader which will be used for displaying logs
 $report_page 	= optional_param('report_page', '0', PARAM_INT); // Page of report.php's table to redirect to  
 
 
@@ -45,35 +47,35 @@ if ($report_page !== '0') {
 }
 
 $title = get_string('report','block_stash');
-$subtitle = get_string('eventshistory','block_stash');
+$subtitle = get_string('eventhistory','block_stash');
 
-$url = new moodle_url("/blocks/stash/events_history.php", $params);
+$url = new moodle_url("/blocks/stash/event_history.php", $params);
 
-$PAGE->set_url('/blocks/stash/events_history.php', array('courseid' => $courseid, 'userid' => $userid));
+$PAGE->set_url('/blocks/stash/event_history.php', array('courseid' => $courseid, 'userid' => $userid));
 $PAGE->set_pagelayout('report');
 
 
-//get course details
+// Get course details
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 require_login($course);
 $context = context_course::instance($course->id);
 
 
-//check for plugin and capabilities
+// Check for plugin and capabilities
 $manager = \block_stash\manager::get($courseid);
 $manager->require_enabled();
 $manager->require_manage();
 
 
 if (!empty($page)) {
-	$strlogs = get_string('eventshistory'). ": ". get_string('page', 'block_stash', $page + 1);
+	$strlogs = get_string('eventhistory'). ": ". get_string('page', 'block_stash', $page + 1);
 } else {
-	$strlogs = get_string('eventshistory');
+	$strlogs = get_string('eventhistory');
 }
 
 $PAGE->set_context($context);
-$PAGE->set_title($course->shortname .': '. $strlogs);
-$PAGE->set_heading($course->fullname);
+$PAGE->set_title($title);
+$PAGE->set_heading($manager->get_context()->get_context_name());
 
 $returnurl = new moodle_url('/blocks/stash/report.php', ['courseid' => $courseid]);
 if($report_page != '0'){
@@ -85,9 +87,10 @@ $PAGE->navbar->add(get_string('stash', 'block_stash'));
 $PAGE->navbar->add($title, $returnurl);
 $PAGE->navbar->add($subtitle);
 
+// Get render and prepare renderable
 $renderer = $PAGE->get_renderer('block_stash');
 
-$reportlog = new eventshistory_renderable($logreader, $course, $userid, $chooselog, 
+$reportlog = new event_history_renderable($logreader, $course, $userid, $chooselog, 
 	true, $url, $date, $page, $perpage, 'timecreated DESC', $report_page);
 $readers = $reportlog->get_readers();
 $output = $PAGE->get_renderer('block_stash');
@@ -95,7 +98,7 @@ $output = $PAGE->get_renderer('block_stash');
 
 if (empty($readers)) {
 
-	//no logstore
+	// No logstore
 	echo $output->header();
 	echo $output->heading(get_string('nologreaderenabled', 'block_stash'));
 
@@ -107,22 +110,20 @@ if (empty($readers)) {
 		$reportlog->setup_table();
 
 		echo $output->header();
-
 		echo $OUTPUT->heading($title,2);		
 		echo $renderer->navigation($manager, 'report');
-		$subtitle = $subtitle . $OUTPUT->help_icon('eventshistory', 'block_stash');
+		$subtitle = $subtitle . $OUTPUT->help_icon('eventhistory', 'block_stash');
 		echo $OUTPUT->heading($subtitle, 3);
-
-		echo $output->render_eventshistory_table($reportlog);
+		echo $output->render_event_history_table($reportlog);
 
 	} else {
 
 		echo $output->header();
 		echo $OUTPUT->heading($title,2);		
 		echo $renderer->navigation($manager, 'report');
-		$subtitle = $subtitle . $OUTPUT->help_icon('eventshistory', 'block_stash');
+		$subtitle = $subtitle . $OUTPUT->help_icon('eventhistory', 'block_stash');
 		echo $OUTPUT->heading($subtitle, 3);
-		echo $output->render_eventshistory_table($reportlog);
+		echo $output->render_event_history_table($reportlog);
 	}
 }
 

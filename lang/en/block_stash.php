@@ -160,16 +160,18 @@ $string['filterstashnotenabled'] = 'The filter plugin is installed but not yet <
 $string['filterstashnotinstalled'] = 'We recommend that you install and enable the <a href="{$a->installurl}" target="_blank">filter plugin for Stash</a>. It makes it easier and more reliable to use the snippets. It also enables trading.';
 $string['filterstashwrongversion'] = 'The filter plugin that you have installed is an early version and does not work with trading. Please visit <a href="{$a}" target="_blank">this page</a> to get the latest version.';
 
-//handle items
+// mfernandriu modifications
 $string['userinventory'] = 'User\' inventory:';
-$string['handleitems'] = 'Handle the user\'s items';
-$string['handleitems_help'] = 'Select the item you want to modify in the users stash. Then write the amount of items you want the user to end with. If you want to delete the item from the user\'s stash set the quantity to 0.';
-$string['handleitemsof'] = 'Handle the items of {$a}';
+$string['edituseritems'] = 'Edit user items';
+$string['edituseritems_help'] = 'Select the item you want to edit and enter the number of items you want the user to end with. If you want to delete the item from the user\'s stash set the quantity to 0.';
+$string['edituseritemsof'] = 'Edit the items of {$a}';
 $string['itemquantity'] = 'Item quantity';
-$string['itemquantity_help'] = 'Set to 0 if you want to delete the item from the user\'s stash or set the number of items you want the user to end with';
-$string['itemquantityexception'] = 'Item quantity should be an positive integer or zero';
-$string['eventshistory'] = "Events history";
-$string['eventshistory_help'] = "Report of all the events of the user related to its items";
-$string['eventshistoryof'] = 'Check the events history of {$a}';
+$string['itemquantity_help'] = 'Enter the number of items you want the user to end with or enter 0 if you want to delete the item from the user\'s stash.';
+$string['itemquantityexception'] = 'Item quantity must be an positive integer or zero';
+$string['eventhistory'] = "Event history";
+$string['eventhistory_help'] = "Report of all the events of the user related to its items";
+$string['eventhistoryof'] = 'Check the event history of {$a}';
+$string['eventhistoryget'] = "Get the events";
 $string['page'] = 'Page {$a}';
 $string['nologreaderenabled'] = 'No log reader enabled';
+$string['saveandexit'] = 'Save and exit';

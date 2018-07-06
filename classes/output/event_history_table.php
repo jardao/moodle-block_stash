@@ -1,6 +1,6 @@
 <?php
 
-class eventshistory_table extends table_sql {
+class event_history_table extends table_sql {
 
 
 	/** @var array list of user fullnames shown in report */
@@ -62,14 +62,12 @@ class eventshistory_table extends table_sql {
 
 	public function col_time($event) {
 
-
 		$dateformat = get_string('strftimedatetimeshort', 'core_langconfig');
 		return userdate($event->timecreated, $dateformat);
 	}
 
 
 	public function col_fullnameuser($event) {
-
         // Add username who did the action.
 		if (!empty($event->userid) && $username = $this->get_user_fullname($event->userid)) {
 			
@@ -117,21 +115,22 @@ class eventshistory_table extends table_sql {
 		$joins = array();
 		$params = array();
 
-		//courseid
+		// courseid
 		$joins[] = "courseid = :courseid";
 		$params['courseid'] = $this->filterparams->courseid;
 
-		//userid
+		// userid
 		$joins[] = "relateduserid = :relateduserid";
 		$params['relateduserid'] = $this->filterparams->userid;
 
+        // date
 		if (!empty($this->filterparams->date)) {
 			$joins[] = "timecreated > :date AND timecreated < :enddate";
 			$params['date'] = $this->filterparams->date;
             $params['enddate'] = $this->filterparams->date + DAYSECS; // Show logs only for the selected date.
         }
 
-        //queda pendiente incluir un join para el nombre del evento
+        // eventname
         $joins[] = "eventname like \"%block_stash%\"";
 
         $selector = implode(' AND ', $joins);
@@ -150,8 +149,6 @@ class eventshistory_table extends table_sql {
         $this->rawdata = $this->filterparams->logreader->get_events_select_iterator($selector, $params,
         	$this->filterparams->orderby, $this->get_page_start(), $this->get_page_size());
 
-        // no sé qué hace ésto
-        // Set initial bars.
         if ($useinitialsbar && !$this->is_downloading()) {
         	$this->initialbars($total > $pagesize);
         }

@@ -17,6 +17,7 @@ $page        = optional_param('page', '0', PARAM_INT);     // Which page to show
 $perpage     = optional_param('perpage', '100', PARAM_INT); // How many per page.
 $chooselog   = optional_param('chooselog', false, PARAM_BOOL); // Print the query 
 $logreader      = optional_param('logreader', '', PARAM_COMPONENT); // Reader which will be used for displaying logs.
+$report_page 	= optional_param('report_page', '0', PARAM_INT); // Page of report.php's table to redirect to  
 
 
 $params = array();
@@ -39,7 +40,9 @@ if ($chooselog) {
 if ($logreader !== '') {
 	$params['logreader'] = $logreader;
 }
-
+if ($report_page !== '0') {
+	$params['report_page'] = $report_page; 
+}
 
 $title = get_string('report','block_stash');
 $subtitle = get_string('eventshistory','block_stash');
@@ -73,6 +76,10 @@ $PAGE->set_title($course->shortname .': '. $strlogs);
 $PAGE->set_heading($course->fullname);
 
 $returnurl = new moodle_url('/blocks/stash/report.php', ['courseid' => $courseid]);
+if($report_page != '0'){
+
+	$returnurl = new moodle_url('/blocks/stash/report.php', ['courseid' => $courseid, 'page' => $report_page]);
+}
 
 $PAGE->navbar->add(get_string('stash', 'block_stash'));
 $PAGE->navbar->add($title, $returnurl);
@@ -81,7 +88,7 @@ $PAGE->navbar->add($subtitle);
 $renderer = $PAGE->get_renderer('block_stash');
 
 $reportlog = new eventshistory_renderable($logreader, $course, $userid, $chooselog, 
-	true, $url, $date, $page, $perpage, 'timecreated DESC');
+	true, $url, $date, $page, $perpage, 'timecreated DESC', $report_page);
 $readers = $reportlog->get_readers();
 $output = $PAGE->get_renderer('block_stash');
 

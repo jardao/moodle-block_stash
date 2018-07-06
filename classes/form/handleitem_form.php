@@ -25,10 +25,12 @@ class handleitem_form extends moodleform {
 		//Hidden
 		$mform->addElement('hidden', 'courseid', $this->_customdata['courseid']);
 		$mform->addElement('hidden', 'userid', $this->_customdata['userid']);
+		$mform->addElement('hidden', 'report_page', $this->_customdata['report_page']);
 
         // Buttons.
 		$buttonarray = [];
-		$buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('submit'));
+		$buttonarray[] = &$mform->createElement('submit', 'saveandnext', get_string('saveandnext', 'block_stash'));
+		$buttonarray[] = &$mform->createElement('submit', 'save', get_string('savechanges', 'block_stash'));
 		$buttonarray[] = &$mform->createElement('cancel');
 		$mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 		$mform->closeHeaderBefore('buttonar');

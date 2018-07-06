@@ -11,6 +11,7 @@ use coding_exception;
 
 $courseid = required_param('courseid', PARAM_INT);
 $userid = required_param('userid', PARAM_INT);
+$report_page = optional_param('report_page', '0',PARAM_INT);
 
 require_login($courseid);
 
@@ -31,6 +32,11 @@ $PAGE->set_heading($manager->get_context()->get_context_name());
 $PAGE->set_url($url);
 
 $returnurl = new moodle_url('/blocks/stash/report.php', ['courseid' => $courseid]);
+if($report_page != '0'){
+
+	$returnurl = new moodle_url('/blocks/stash/report.php', ['courseid' => $courseid, 'page' => $report_page]);
+}
+
 
 $PAGE->navbar->add(get_string('stash', 'block_stash'));
 $PAGE->navbar->add($title, $returnurl);
@@ -56,6 +62,7 @@ if($data = $form->get_data()){
 	$userid = $data -> userid;
 	$itemid = $data -> itemid;
 	$itemquantity = $data -> itemquantity;
+	$report_page = $data -> report_page;
 
 	//to check courseid
 	$form_manager = \block_stash\manager::get($courseid);
@@ -114,6 +121,14 @@ if($data = $form->get_data()){
         );
         $event->trigger();
 	}
+
+    $saveandnext = !empty($data->saveandnext);
+    unset($data->saveandnext);
+
+    if ($saveandnext) {
+
+        redirect(new moodle_url('/blocks/stash/handle_items.php', ['userid' => $userid, 'courseid' => $courseid, 'report_page' => $report_page]));
+    }
 
 	redirect($returnurl);
 

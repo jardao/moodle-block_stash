@@ -44,8 +44,11 @@ class eventshistory_renderable implements renderable {
 	/** @var table_log table log which will be used for rendering logs */
 	public $tablelog;
 
+	/** @var string report.php's table page used for redirecting */
+	public $report_page;
+
 	public function __construct($logreader = "", $course = 0, $userid = 0, $showreport = true, 
-		$showselectorform = true, $url = "", $date = 0, $page = 0, $perpage = 100, $order = "timecreated ASC") {
+		$showselectorform = true, $url = "", $date = 0, $page = 0, $perpage = 100, $order = "timecreated ASC", $report_page) {
 
 		global $PAGE;
 
@@ -82,6 +85,7 @@ class eventshistory_renderable implements renderable {
 		$this->order = $order;
 		$this->showreport = $showreport;
 		$this->showselectorform = $showselectorform;
+		$this->report_page = $report_page;
 	}
 
 	//para obtener la lista de readers

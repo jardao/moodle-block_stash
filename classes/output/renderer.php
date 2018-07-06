@@ -246,6 +246,10 @@ class renderer extends plugin_renderer_base {
         $userid = $reportlog->userid;
         echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'userid', 'value' => $userid));
 
+        $report_page = $reportlog->report_page;
+        echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'report_page', 'value' => $report_page));
+
+
         // Add date selector.
         $dates = $reportlog->get_date_options();
         echo html_writer::label(get_string('date'), 'menudate', false, array('class' => 'accesshide'));

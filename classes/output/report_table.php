@@ -155,16 +155,20 @@ class report_table extends table_sql {
             get_string('resetstashof', 'block_stash', $fullname)));
         $actions[] = $actionlink;
 
-        //handle items
+        //  @mfernandriu
+        //  Link to to handle items.php
+        //  We pass the userid, courseid and the current page of the table which
+        //  would be use for returning here
         $url = new moodle_url('/blocks/stash/handle_items.php');
-        $url->params(['userid' => $row->id, 'courseid' => $this->manager->get_courseid()]);
+        $url->params(['userid' => $row->id, 'courseid' => $this->manager->get_courseid(), 'report_page' => $this->currpage]);
         $actionlink = $OUTPUT->action_link($url, '', null, null, new pix_icon('i/edit', 
             get_string('handleitemsof', 'block_stash', $fullname)));        
         $actions[] = $actionlink;
 
-        //events history
+        // Link to the events_history.php
+        // Same params as hadnle_items.php
         $url = new moodle_url('/blocks/stash/events_history.php');
-        $url->params(['userid' => $row->id, 'courseid' => $this->manager->get_courseid()]);
+        $url->params(['userid' => $row->id, 'courseid' => $this->manager->get_courseid(), 'report_page' => $this->currpage]);
         $actionlink = $OUTPUT->action_link($url, '', null, null, new pix_icon('i/report', 
             get_string('eventshistoryof', 'block_stash', $fullname)));
         $actions[] = $actionlink;

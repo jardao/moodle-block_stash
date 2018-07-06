@@ -8,6 +8,7 @@ global $DB;
 global $USER;
 
 use coding_exception;
+use block_stash\external\user_item_summary_exporter;
 
 $courseid = required_param('courseid', PARAM_INT);
 $userid = required_param('userid', PARAM_INT);
@@ -106,29 +107,29 @@ if($data = $form->get_data()){
 			$user_item -> update();
 		}
 
-        $relatedusername = $DB->get_field('user','username',['id' => $userid]);
+		$relatedusername = $DB->get_field('user','username',['id' => $userid]);
 		$item = new \block_stash\item($itemid);
-        $itemname = $item->get_name();
-        $event = \block_stash\event\item_acquired::create(array(
-                'context' => $context,
-                'userid' => $USER->id,
-                'courseid' => $courseid,
-                'objectid' => $item->get_id(),
-                'relateduserid' => $userid,
-                'other' => array('quantity' => $itemquantity, 'relatedusername' => $relatedusername, 'droportrade' => 'modification', 
-                    'username' => $USER->username, 'itemname' => $itemname)
-            )
-        );
-        $event->trigger();
+		$itemname = $item->get_name();
+		$event = \block_stash\event\item_acquired::create(array(
+			'context' => $context,
+			'userid' => $USER->id,
+			'courseid' => $courseid,
+			'objectid' => $item->get_id(),
+			'relateduserid' => $userid,
+			'other' => array('quantity' => $itemquantity, 'relatedusername' => $relatedusername, 'droportrade' => 'modification', 
+				'username' => $USER->username, 'itemname' => $itemname)
+			)
+		);
+		$event->trigger();
 	}
 
-    $saveandnext = !empty($data->saveandnext);
-    unset($data->saveandnext);
+	$saveandnext = !empty($data->saveandnext);
+	unset($data->saveandnext);
 
-    if ($saveandnext) {
+	if ($saveandnext) {
 
-        redirect(new moodle_url('/blocks/stash/handle_items.php', ['userid' => $userid, 'courseid' => $courseid, 'report_page' => $report_page]));
-    }
+		redirect(new moodle_url('/blocks/stash/handle_items.php', ['userid' => $userid, 'courseid' => $courseid, 'report_page' => $report_page]));
+	}
 
 	redirect($returnurl);
 
@@ -137,11 +138,29 @@ if($data = $form->get_data()){
 	redirect($returnurl);
 }
 
+//To print user's item inventory
+$items = $manager->get_all_user_items_in_stash($userid);
+if (!empty($items)) {
+	
+	$html = '';
+	foreach ($items as $item) {
+		$exporter = new user_item_summary_exporter([], [
+			'context' => $manager->get_context(),
+			'item' => $item->item,
+			'useritem' => $item->useritem,
+			]);
+		$data = $exporter->export($renderer);
+		$inventory .= $renderer->render_from_template('block_stash/user_item_small', $data);
+	}
+}
+
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title,2);
 echo $renderer->navigation($manager, 'report');
 $subtitle = $subtitle . $OUTPUT->help_icon('handleitems', 'block_stash');
 echo $OUTPUT->heading($subtitle, 3);
+echo $OUTPUT->heading(get_string('userinventory', 'block_stash') . ' ' . $inventory, 4);
 $form->display();
 echo $OUTPUT->footer();
 ?>

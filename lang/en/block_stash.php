@@ -161,6 +161,7 @@ $string['filterstashnotinstalled'] = 'We recommend that you install and enable t
 $string['filterstashwrongversion'] = 'The filter plugin that you have installed is an early version and does not work with trading. Please visit <a href="{$a}" target="_blank">this page</a> to get the latest version.';
 
 //handle items
+$string['userinventory'] = 'User\' inventory:';
 $string['handleitems'] = 'Handle the user\'s items';
 $string['handleitems_help'] = 'Select the item you want to modify in the users stash. Then write the amount of items you want the user to end with. If you want to delete the item from the user\'s stash set the quantity to 0.';
 $string['handleitemsof'] = 'Handle the items of {$a}';

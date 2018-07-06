@@ -80,58 +80,60 @@ if($data = $form->get_data()){
     //to check itemquantity
 	if($itemquantity < 0){
 
-		throw new coding_exception("Invalid item quantity");
+		$notify_item_quantity = true;
 	}
+	else{
 
-    //to delete the item
-	if($itemquantity == 0){
+   		 //to delete the item
+		if($itemquantity == 0){
 
-		$DB->delete_records(\block_stash\user_item::TABLE, ['itemid' => $itemid, 'userid' => $userid]);
-		
-	} else {
+			$DB->delete_records(\block_stash\user_item::TABLE, ['itemid' => $itemid, 'userid' => $userid]);
 
-    	//we check wether the user already has the item
-		if($DB -> record_exists('block_stash_user_items', array('itemid' => $itemid, 'userid' => $userid))){
+		} else {
 
-			$user_item_id = $DB -> get_field('block_stash_user_items', 'id', array('itemid' => $itemid, 'userid' => $userid));
-			$user_item = new \block_stash\user_item($user_item_id);
-			$user_item -> set_quantity($itemquantity);
-			$user_item -> update();
+	    	//we check wether the user already has the item
+			if($DB -> record_exists('block_stash_user_items', array('itemid' => $itemid, 'userid' => $userid))){
 
-		} else{
+				$user_item_id = $DB -> get_field('block_stash_user_items', 'id', array('itemid' => $itemid, 'userid' => $userid));
+				$user_item = new \block_stash\user_item($user_item_id);
+				$user_item -> set_quantity($itemquantity);
+				$user_item -> update();
 
-			$params = ['userid' => $userid, 'itemid' => $itemid]; 
-			$user_item = new \block_stash\user_item(null, (object) $params);
-			$user_item -> create();
-			$user_item -> set_quantity($itemquantity);
-			$user_item -> update();
+			} else{
+
+				$params = ['userid' => $userid, 'itemid' => $itemid]; 
+				$user_item = new \block_stash\user_item(null, (object) $params);
+				$user_item -> create();
+				$user_item -> set_quantity($itemquantity);
+				$user_item -> update();
+			}
+
+			$relatedusername = $DB->get_field('user','username',['id' => $userid]);
+			$item = new \block_stash\item($itemid);
+			$itemname = $item->get_name();
+			$event = \block_stash\event\item_acquired::create(array(
+				'context' => $context,
+				'userid' => $USER->id,
+				'courseid' => $courseid,
+				'objectid' => $item->get_id(),
+				'relateduserid' => $userid,
+				'other' => array('quantity' => $itemquantity, 'relatedusername' => $relatedusername, 'droportrade' => 'modification', 
+					'username' => $USER->username, 'itemname' => $itemname)
+				)
+			);
+			$event->trigger();
 		}
 
-		$relatedusername = $DB->get_field('user','username',['id' => $userid]);
-		$item = new \block_stash\item($itemid);
-		$itemname = $item->get_name();
-		$event = \block_stash\event\item_acquired::create(array(
-			'context' => $context,
-			'userid' => $USER->id,
-			'courseid' => $courseid,
-			'objectid' => $item->get_id(),
-			'relateduserid' => $userid,
-			'other' => array('quantity' => $itemquantity, 'relatedusername' => $relatedusername, 'droportrade' => 'modification', 
-				'username' => $USER->username, 'itemname' => $itemname)
-			)
-		);
-		$event->trigger();
+		$saveandnext = !empty($data->saveandnext);
+		unset($data->saveandnext);
+
+		if ($saveandnext) {
+
+			redirect(new moodle_url('/blocks/stash/handle_items.php', ['userid' => $userid, 'courseid' => $courseid, 'report_page' => $report_page]));
+		}
+
+		redirect($returnurl);
 	}
-
-	$saveandnext = !empty($data->saveandnext);
-	unset($data->saveandnext);
-
-	if ($saveandnext) {
-
-		redirect(new moodle_url('/blocks/stash/handle_items.php', ['userid' => $userid, 'courseid' => $courseid, 'report_page' => $report_page]));
-	}
-
-	redirect($returnurl);
 
 } elseif( $form->is_cancelled()){
 
@@ -161,6 +163,13 @@ echo $renderer->navigation($manager, 'report');
 $subtitle = $subtitle . $OUTPUT->help_icon('handleitems', 'block_stash');
 echo $OUTPUT->heading($subtitle, 3);
 echo $OUTPUT->heading(get_string('userinventory', 'block_stash') . ' ' . $inventory, 4);
+
+if($notify_item_quantity){
+
+	echo $renderer->notification(get_string('itemquantityexception', 'block_stash'), 'notifyproblem');
+}
+
 $form->display();
+
 echo $OUTPUT->footer();
 ?>

@@ -216,7 +216,7 @@ class renderer extends plugin_renderer_base {
         return parent::render_from_template('block_stash/trade_form', $data);
     }
 
-    // mfernandriu modifications
+    // @mfernandriu modifications
     public function render_event_history_table(\event_history_renderable $reportlog){
 
         if (empty($reportlog->selectedlogreader)) {

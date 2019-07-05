@@ -1,6 +1,6 @@
 <?php
 
-//  mfernadriu
+//  @mfernandriu modifications
 //  This script allows an user with managing capabilities to edit the items of another user.
 //  It allows deleting an item or modifying the quantity
 
@@ -54,7 +54,7 @@ $renderer = $PAGE->get_renderer('block_stash');
 $items = $manager -> get_items();
 
 foreach ($items as $item) {
-	
+
 	$id = $item -> get_id();
 	$name = $item -> get_name();
 	$itemsf[$id] = $name;
@@ -81,7 +81,7 @@ if($data = $form->get_data()){
 	if (!\block_stash\item::is_item_in_stash($itemid, $form_manager->get_stash()->get_id())) {
 
 		throw new coding_exception("Invalid item");
-	} 
+	}
 
     // To check itemquantity
 	if($itemquantity < 0){
@@ -95,6 +95,22 @@ if($data = $form->get_data()){
 		if($itemquantity == 0){
 
 			$DB->delete_records(\block_stash\user_item::TABLE, ['itemid' => $itemid, 'userid' => $userid]);
+
+			// To trigger the block's event
+			$relatedusername = $DB->get_field('user','username',['id' => $userid]);
+			$item = new \block_stash\item($itemid);
+			$itemname = $item->get_name();
+			$event = \block_stash\event\item_acquired::create(array(
+				'context' => $context,
+				'userid' => $USER->id,
+				'courseid' => $courseid,
+				'objectid' => $item->get_id(),
+				'relateduserid' => $userid,
+				'other' => array('quantity' => $itemquantity, 'relatedusername' => $relatedusername, 'droportrade' => 'modification',
+					'username' => $USER->username, 'itemname' => $itemname)
+				)
+			);
+			$event->trigger();
 
 		} else {
 
@@ -110,7 +126,7 @@ if($data = $form->get_data()){
 			} else{
 
 				// It does'nt so we create it
-				$params = ['userid' => $userid, 'itemid' => $itemid]; 
+				$params = ['userid' => $userid, 'itemid' => $itemid];
 				$user_item = new \block_stash\user_item(null, (object) $params);
 				$user_item -> create();
 				$user_item -> set_quantity($itemquantity);
@@ -127,7 +143,7 @@ if($data = $form->get_data()){
 				'courseid' => $courseid,
 				'objectid' => $item->get_id(),
 				'relateduserid' => $userid,
-				'other' => array('quantity' => $itemquantity, 'relatedusername' => $relatedusername, 'droportrade' => 'modification', 
+				'other' => array('quantity' => $itemquantity, 'relatedusername' => $relatedusername, 'droportrade' => 'modification',
 					'username' => $USER->username, 'itemname' => $itemname)
 				)
 			);
@@ -156,7 +172,7 @@ if($data = $form->get_data()){
 //To print user's item inventory
 $items = $manager->get_all_user_items_in_stash($userid);
 if (!empty($items)) {
-	
+
 	$html = '';
 	foreach ($items as $item) {
 		$exporter = new user_item_summary_exporter([], [

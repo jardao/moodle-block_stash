@@ -44,14 +44,14 @@ class item_acquired extends \core\event\base {
 
     /**
      * Returns description of what happened.
-     * 
+     *
      * @return string
      */
     public function get_description() {
 
-        // mfernadriu modifications
+        // @mfernandriu modifications
         // Replaced numbers with strings for easier reading
-        return "The user '" . $this->other['username'] . "' helped the user '" . $this->other['relatedusername'] 
+        return "The user '" . $this->other['username'] . "' helped the user '" . $this->other['relatedusername']
             . "'  to acquire an item '" . $this->other['itemname'] . "' with the quantity of '"
             . $this->other['quantity'] . "' via '" . $this->other['droportrade'] . "'.";
     }

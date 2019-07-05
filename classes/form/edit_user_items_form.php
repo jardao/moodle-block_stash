@@ -1,5 +1,7 @@
 <?php
 
+//@mfernandriu modifications
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
@@ -20,7 +22,7 @@ class edit_user_items_form extends moodleform {
 		// Item quantity
 		$mform->addElement('text', 'itemquantity', get_string('itemquantity', 'block_stash'));
 		$mform->setType('itemquantity', PARAM_INT);
-		$mform->addRule('itemquantity',get_string('itemquantityexception', 'block_stash'),'numeric',null,'client');
+        $mform->addRule('itemquantity', get_string('itemquantityexception', 'block_stash'), 'regex', '/^[0-9]*$/', 'client');
 		$mform->addRule('itemquantity', null, 'required', null, 'client');
         $mform->addHelpButton('itemquantity', 'itemquantity', 'block_stash');
 

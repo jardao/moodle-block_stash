@@ -654,7 +654,7 @@ class manager {
 
         // TODO Implement quantity from the drop configuration.
         $quantity = 1;
-        $this->pickup_item($drop->get_itemid(), $quantity, $userid, 'drop');
+        $this->pickup_item($drop->get_itemid(), $quantity, $userid, 'drop'); // @mfernandriu modifications
 
         // Update the drop pickup values.
         $dp->set_pickupcount($dp->get_pickupcount() + 1);
@@ -672,7 +672,7 @@ class manager {
      * @param int|item $itemorid The item, or its ID.
      * @param int $quantity The quantity of item being pickuped.
      * @param int $userid The user pickuping the item.
-     * @param string $droportrade The method used to obtain the item (mfernadriu modifications)
+     * @param string $droportrade The method used to obtain the item (@mfernadriu modifications)
      * @return void
      */
     public function pickup_item($itemorid, $quantity = 1, $userid = null, $droportrade = 'drop') {
@@ -707,9 +707,9 @@ class manager {
         $ui->set_quantity($currentquantity + $quantity);
         $ui->update();
 
-        // mfernadriu modifications
+        // @mfernadriu modifications
         // Strings added in the event's "other" field to get an easier read on event's description.
-        $relatedusername = $DB->get_field('user','username',['id' => $userid]);      
+        $relatedusername = $DB->get_field('user','username',['id' => $userid]);
         $itemname = $item->get_name();
         $event = \block_stash\event\item_acquired::create(array(
                 'context' => $this->context,
@@ -717,7 +717,7 @@ class manager {
                 'courseid' => $this->courseid,
                 'objectid' => $item->get_id(),
                 'relateduserid' => $userid,
-                'other' => array('quantity' => $quantity, 'relatedusername' => $relatedusername, 'droportrade' => $droportrade, 
+                'other' => array('quantity' => $quantity, 'relatedusername' => $relatedusername, 'droportrade' => $droportrade,
                     'username' => $USER->username, 'itemname' => $itemname)
             )
         );
@@ -966,7 +966,7 @@ class manager {
         // If we get this far, then follow through with the trade.
         $this->remove_user_items($requireditems, $userid);
         foreach ($itemstoacquire as $items) {
-            $this->pickup_item($items->get_itemid(), $items->get_quantity(), $userid, 'trade');
+            $this->pickup_item($items->get_itemid(), $items->get_quantity(), $userid, 'trade'); //@mfernandriu modifications
         }
         // Send back summary information.
         return [

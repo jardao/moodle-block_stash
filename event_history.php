@@ -1,6 +1,6 @@
 <?php
 
-//  mfernandriu
+//  @mfernandriu modifications
 //  This script allows the user to check the block_stash plugin's events related to some course user
 
 require('../../config.php');
@@ -17,9 +17,9 @@ $userid 	= required_param('userid', PARAM_INT); // User to display
 $date       = optional_param('date', 0, PARAM_INT); // Date to display.
 $page        = optional_param('page', '0', PARAM_INT);     // Which page to show.
 $perpage     = optional_param('perpage', '100', PARAM_INT); // How many per page.
-$chooselog   = optional_param('chooselog', false, PARAM_BOOL); // Print the query 
+$chooselog   = optional_param('chooselog', false, PARAM_BOOL); // Print the query
 $logreader      = optional_param('logreader', '', PARAM_COMPONENT); // Reader which will be used for displaying logs
-$report_page 	= optional_param('report_page', '0', PARAM_INT); // Page of report.php's table to redirect to  
+$report_page 	= optional_param('report_page', '0', PARAM_INT); // Page of report.php's table to redirect to
 
 
 $params = array();
@@ -43,7 +43,7 @@ if ($logreader !== '') {
 	$params['logreader'] = $logreader;
 }
 if ($report_page !== '0') {
-	$params['report_page'] = $report_page; 
+	$params['report_page'] = $report_page;
 }
 
 $title = get_string('report','block_stash');
@@ -90,11 +90,10 @@ $PAGE->navbar->add($subtitle);
 // Get render and prepare renderable
 $renderer = $PAGE->get_renderer('block_stash');
 
-$reportlog = new event_history_renderable($logreader, $course, $userid, $chooselog, 
+$reportlog = new event_history_renderable($logreader, $course, $userid, $chooselog,
 	true, $url, $date, $page, $perpage, 'timecreated DESC', $report_page);
 $readers = $reportlog->get_readers();
 $output = $PAGE->get_renderer('block_stash');
-
 
 if (empty($readers)) {
 
@@ -110,7 +109,7 @@ if (empty($readers)) {
 		$reportlog->setup_table();
 
 		echo $output->header();
-		echo $OUTPUT->heading($title,2);		
+		echo $OUTPUT->heading($title,2);
 		echo $renderer->navigation($manager, 'report');
 		$subtitle = $subtitle . $OUTPUT->help_icon('eventhistory', 'block_stash');
 		echo $OUTPUT->heading($subtitle, 3);
@@ -119,7 +118,7 @@ if (empty($readers)) {
 	} else {
 
 		echo $output->header();
-		echo $OUTPUT->heading($title,2);		
+		echo $OUTPUT->heading($title,2);
 		echo $renderer->navigation($manager, 'report');
 		$subtitle = $subtitle . $OUTPUT->help_icon('eventhistory', 'block_stash');
 		echo $OUTPUT->heading($subtitle, 3);

@@ -1,5 +1,6 @@
 <?php
 
+// @mfernandriu modifications
 class event_history_table extends table_sql {
 
 
@@ -70,14 +71,14 @@ class event_history_table extends table_sql {
 	public function col_fullnameuser($event) {
         // Add username who did the action.
 		if (!empty($event->userid) && $username = $this->get_user_fullname($event->userid)) {
-			
+
 				$params = array('id' => $event->userid);
 				if ($event->courseid) {
 
 					$params['course'] = $event->courseid;
 				}
 				$username = html_writer::link(new moodle_url('/user/view.php', $params), $username);
-			
+
 		} else {
 			$username = '-';
 		}
@@ -88,14 +89,14 @@ class event_history_table extends table_sql {
 	public function col_relatedfullnameuser($event) {
         // Add affected user.
 		if (!empty($event->relateduserid) && $username = $this->get_user_fullname($event->relateduserid)) {
-			
+
 				$params = array('id' => $event->relateduserid);
 				if ($event->courseid) {
 
 					$params['course'] = $event->courseid;
 				}
 				$username = html_writer::link(new moodle_url('/user/view.php', $params), $username);
-			
+
 		} else {
 			$username = '-';
 		}

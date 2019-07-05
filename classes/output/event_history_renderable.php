@@ -1,5 +1,7 @@
 <?php
 
+// @mfernandriu modifications
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once('event_history_table.php');

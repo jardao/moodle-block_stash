@@ -216,4 +216,65 @@ class renderer extends plugin_renderer_base {
         return parent::render_from_template('block_stash/trade_form', $data);
     }
 
+    public function render_event_history_table(\event_history_renderable $reportlog){
+
+        if (empty($reportlog->selectedlogreader)) {
+            echo $this->output->notification(get_string('nologreaderenabled', 'report_log'), 'notifyproblem');
+            return;
+        }
+        if ($reportlog->showselectorform) {
+            $this->report_selector_form($reportlog);
+        }
+
+        if ($reportlog->showreport) {
+            $reportlog->tablelog->out($reportlog->perpage, true);
+        }
+    }
+
+    // To print event_history.php's search options
+    public function report_selector_form(\event_history_renderable $reportlog) {
+        echo html_writer::start_tag('form', array('class' => 'logselecform', 'action' => $reportlog->url, 'method' => 'get'));
+        echo html_writer::start_div();
+
+        // To show the query
+        echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'chooselog', 'value' => '1'));
+
+        // courseid
+        $courseid = $reportlog->course->id;
+        echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'courseid', 'value' => $courseid ));
+
+        // userid
+        $userid = $reportlog->userid;
+        echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'userid', 'value' => $userid));
+
+        // Page of report.php's table to redirect to
+        $report_page = $reportlog->report_page;
+        echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'report_page', 'value' => $report_page));
+
+
+        // Add date selector.
+        $dates = $reportlog->get_date_options();
+        echo html_writer::label(get_string('date'), 'menudate', false, array('class' => 'accesshide'));
+        echo html_writer::select($dates, "date", $reportlog->date, get_string("alldays"));
+
+
+        // Add reader option.
+        // If there is some reader available then only show submit button.
+        $readers = $reportlog->get_readers(true);
+        if (!empty($readers)) {
+            if (count($readers) == 1) {
+                $attributes = array('type' => 'hidden', 'name' => 'logreader', 'value' => key($readers));
+                echo html_writer::empty_tag('input', $attributes);
+            } else {
+                echo html_writer::label(get_string('selectlogreader', 'report_log'), 'menureader', false,
+                    array('class' => 'accesshide'));
+                echo html_writer::select($readers, 'logreader', $reportlog->selectedlogreader, false);
+            }
+            echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('eventhistoryget','block_stash'),
+                'class' => 'btn btn-secondary'));
+        }
+        echo html_writer::end_div();
+        echo html_writer::end_tag('form');
+    }
+
 }

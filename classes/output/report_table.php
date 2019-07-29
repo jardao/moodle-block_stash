@@ -155,6 +155,13 @@ class report_table extends table_sql {
             get_string('resetstashof', 'block_stash', $fullname)));
         $actions[] = $actionlink;
 
+        //  Link to edit_user_items.php
+        $url = new moodle_url('/blocks/stash/edit_user_items.php');
+        $url->params(['userid' => $row->id, 'courseid' => $this->manager->get_courseid(), 'report_page' => $this->currpage]);
+        $actionlink = $OUTPUT->action_link($url, '', null, null, new pix_icon('i/edit',
+            get_string('edituseritemsof', 'block_stash', $fullname)));
+        $actions[] = $actionlink;
+
         return implode(' ', $actions);
     }
 

@@ -159,3 +159,14 @@ $string['filterstashnotactive'] = 'The filter plugin is installed but not yet en
 $string['filterstashnotenabled'] = 'The filter plugin is installed but not yet <a href="{$a->enableurl}" target="_blank">enabled</a>.';
 $string['filterstashnotinstalled'] = 'We recommend that you install and enable the <a href="{$a->installurl}" target="_blank">filter plugin for Stash</a>. It makes it easier and more reliable to use the snippets. It also enables trading.';
 $string['filterstashwrongversion'] = 'The filter plugin that you have installed is an early version and does not work with trading. Please visit <a href="{$a}" target="_blank">this page</a> to get the latest version.';
+
+//inventory edition
+$string['userinventory'] = 'User\' inventory:';
+$string['edituseritems'] = 'Edit user items';
+$string['edituseritems_help'] = 'Select the item you want to edit and enter the number of items you want the user to end with. If you want to delete the item from the user\'s stash set the quantity to 0.';
+$string['edituseritemsof'] = 'Edit the items of {$a}';
+$string['itemquantity'] = 'Item quantity';
+$string['itemquantity_help'] = 'Enter the number of items you want the user to end with or enter 0 if you want to delete the item from the user\'s stash.';
+$string['itemquantityexception'] = 'Item quantity must be an positive integer or zero';
+$string['page'] = 'Page {$a}';
+$string['saveandexit'] = 'Save and exit';
